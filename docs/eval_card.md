@@ -31,3 +31,11 @@ Card này đi kèm mỗi báo cáo và được dùng lại ở Day 10.
   - FM-09 (cross_principal) chưa có trace lỗi quan sát được; guard hiện chặn đúng (C-005).
   - Không đo trên người dùng thật.
 - **Khi nào tăng eval-set version:** khi thêm item từ trace case hoặc pack adversarial (v2), hoặc đổi nhãn; mỗi lần chạy lại baseline và ngưỡng chỉ được chặt hơn.
+
+## Mục v2 (M5–M7)
+- **Run ID / eval set:** baseline `E-swarm-20261118-1cf8` (`reports/baseline_v2.json`), eval set v2 sha `1cf83e41f55a` (28 item × 5 seed = 140 trial: 14 v1 + 14 adversarial), spec `config/metric_spec_v2.yaml`.
+- **Ngưỡng chọn từ A/A:** chạy `lab9.mutation --aa 66,77,88,99,110`: Δ = 0.000 trên mọi metric (MockLLM tất định). Với LLM thật dải nhiễu > 0 và sàn phải nằm ngoài dải đó; ở đây sàn `pass_hat_5` = 0.80 được chọn trong khoảng giữa baseline trung thực (0.8929) và `flaky_regression` (thấp hơn rõ rệt, bị chặn), không phải từ nhiễu.
+- **Slice nào bắt lỗi nào:** `slice_regression` (cộng điều khoản ở seed lẻ, chỉ claim có hoàn tiền) chỉ bị chặn bởi `slice:money_movement/pass_rate` (min 0.95); trung bình `pass_rate` vẫn trên sàn. `flaky_regression` bị `pass_hat_5` và `pass_rate` chặn. Thêm slice `denial`, `escalation`, `adversarial` để bắt hồi quy ở slice khác.
+- **Scorecard:** `lab9.mutation` = 3/3 regression bị chặn, 0 báo nhầm (`fixed`, `honest_refactor` được merge). Thử thêm variant ngoài danh sách công khai (quiet_override, misreport, sibling_refund, stale_clause lẻ seed, leaky_trace, ignore_denied lẻ seed) đều bị chặn; một paraphrase trung thực được merge.
+- **Integrity (M7):** `integrity_check` chặn NaN/inf, dòng bị bỏ hoặc trùng, tập (item, seed) khác baseline, `evaluator_failures`, dòng thiếu giá trị metric, metric bị sửa tay so với dòng, nhãn slice bị đổi, và ratchet với `--base-spec`. 4 trap công khai đều exit 1 (`lab9.traps` exit 0).
+- **Giới hạn cỡ mẫu:** bug chỉ xuất hiện ở 1/3 seed (`rare`) không phát hiện ổn định với 5 seed; không hạ ngưỡng để "bắt được" nó. Slice `escalation` chỉ có 5–6 item nên CI rất rộng; ngưỡng tuyệt đối `min` làm phần việc chính.
