@@ -12,7 +12,7 @@ __pycache__/
 
 # Runtime output. Reports for grading (baseline_v1/v2, eval_fixed, eval_seeded_regression)
 # are committed with: git add -f reports/*.json
-src/reports/
+
 traces/
 *.sqlite
 *.sqlite-*
